@@ -3,7 +3,7 @@
 	<name>ADB_software</name>
 	<comment></comment>
 	<projects>
-		<project>tirtos_builds_MSP_EXP432P401R_release_gcc</project>
+		<project>tirtos_builds_MSP_EXP432P401R_debug_gcc</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

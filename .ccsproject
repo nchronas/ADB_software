@@ -7,11 +7,12 @@
 	<deviceEndianness value="little"/>
 	<codegenToolVersion value="GNU_6.3.1:Linaro"/>
 	<isElfFormat value="true"/>
-	<connection value="common/targetdb/connections/TIXDS110_Connection.xml"/>
+	<connection value="common/targetdb/connections/segger_j-link_connection.xml"/>
 	<rts value=""/>
 	<createSlaveProjects value=""/>
 	<ignoreDefaultDeviceSettings value="true"/>
 	<templateProperties value="id=uartecho_MSP_EXP432P401R_tirtos_gcc.projectspec.uartecho_MSP_EXP432P401R_tirtos_gcc,buildProfile=release,isHybrid=true,"/>
 	<origin value="/Applications/ti/simplelink_msp432p4_sdk_1_60_00_12/examples/rtos/MSP_EXP432P401R/drivers/uartecho/tirtos/gcc/uartecho_MSP_EXP432P401R_tirtos_gcc.projectspec"/>
 	<filesToOpen value=""/>
+	<isTargetManual value="false"/>
 </projectOptions>

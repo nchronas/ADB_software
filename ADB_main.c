@@ -41,48 +41,96 @@
 #include <ti/drivers/UART.h>
 
 /* Example/Board Header files */
-#include "Board.h"
+#include "ADB_Board.h"
+
+#include "satellite.h"
+#include "devices.h"
+
+#include "INA226.h"
+#include "TMP100.h"
+
+extern UART_Handle uart_dbg_bus;
+extern UART_Handle uart_pq9_bus;
 
 /*
  *  ======== mainThread ========
  */
 void *mainThread(void *arg0)
 {
-    char        input;
-    const char  echoPrompt[] = "Echoing characters:\r\n";
-    UART_Handle uart;
-    UART_Params uartParams;
 
     /* Call driver init functions */
     GPIO_init();
     UART_init();
-
-    /* Configure the LED pin */
-    GPIO_setConfig(Board_GPIO_LED0, GPIO_CFG_OUT_STD | GPIO_CFG_OUT_LOW);
+    I2C_init();
 
     /* Turn on user LED */
-    GPIO_write(Board_GPIO_LED0, Board_GPIO_LED_ON);
+    GPIO_write(PQ9_EN, 1);
+    GPIO_write(PQ9_EN, 0);
 
-    /* Create a UART with data processing off. */
-    UART_Params_init(&uartParams);
-    uartParams.writeDataMode = UART_DATA_BINARY;
-    uartParams.readDataMode = UART_DATA_BINARY;
-    uartParams.readReturnMode = UART_RETURN_FULL;
-    uartParams.readEcho = UART_ECHO_OFF;
-    uartParams.baudRate = 115200;
 
-    uart = UART_open(Board_UART0, &uartParams);
+    /*ECSS services start*/
+    pkt_pool_INIT();
+    device_init();
 
-    if (uart == NULL) {
-        /* UART_open() failed */
-        while (1);
-    }
-
-    UART_write(uart, echoPrompt, sizeof(echoPrompt));
+    UART_write(uart_pq9_bus, "Hell o\n",7);
 
     /* Loop forever echoing */
     while (1) {
-        UART_read(uart, &input, 1);
-        UART_write(uart, &input, 1);
+
+        update_device(ADB_MON_DEV_ID);
+        usleep(1);
+
+        update_device(ADB_TEMP_DEV_ID);
+        usleep(1);
+
+        usleep(100);
+
     }
+}
+
+
+/*  ======== ecssThread ========
+ *  This thread runs on a higher priority, since wdg pin
+ *  has to be ready for master.
+ */
+void *ecssThread(void *arg0)
+{
+
+    /* Loop forever */
+    while (1) {
+         import_pkt();
+         export_pkt();
+         usleep(1);
+    }
+
+    return (NULL);
+}
+
+char msg[100];
+
+/*  ======== senThread ========
+ *  This a dbg thread for outputing sensor readings
+ */
+void *senThread(void *arg0)
+{
+
+    struct ina_device ina_dev;
+    struct tmp_device tmp_dev;
+
+    /* Loop forever */
+    while (1) {
+
+
+        read_device_parameters(ADB_MON_DEV_ID, &ina_dev);
+        read_device_parameters(ADB_TEMP_DEV_ID, &tmp_dev);
+
+        sprintf(msg, "INA: C %d, V %d, W %d, Temp: %d\n", (int)(ina_dev.current*1000), (int)ina_dev.voltage, (int)ina_dev.power, (int)tmp_dev.temp);
+        UART_write(uart_dbg_bus, msg, strlen(msg));
+
+        sleep(1);
+
+
+    }
+
+    return (NULL);
 }
