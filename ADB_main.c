@@ -117,6 +117,9 @@ void *senThread(void *arg0)
     struct ina_device ina_dev;
     struct tmp_device tmp_dev;
 
+    sprintf(msg, "Reset\n");
+    UART_write(uart_dbg_bus, msg, strlen(msg));
+
     /* Loop forever */
     while (1) {
 
