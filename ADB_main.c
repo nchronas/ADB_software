@@ -72,8 +72,6 @@ void *mainThread(void *arg0)
     pkt_pool_INIT();
     device_init();
 
-    UART_write(uart_pq9_bus, "Hell o\n",7);
-
     /* Loop forever echoing */
     while (1) {
 
