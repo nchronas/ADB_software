@@ -96,11 +96,13 @@ void *mainThread(void *arg0)
 void *ecssThread(void *arg0)
 {
 
+    sleep(1);
+
     /* Loop forever */
     while (1) {
          import_pkt();
          export_pkt();
-         usleep(1);
+         usleep(1000);
     }
 
     return (NULL);
