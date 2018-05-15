@@ -36,12 +36,11 @@
 //
 //*****************************************************************************
 
-// This file was automatically generated on 02/05/2018 at 17:25:59
-// by TI PinMux version 4.0.1511
+// This file was automatically generated on 11/05/2018 at 22:36:38
+// by TI PinMux version 4.0.1519
 //
 //*****************************************************************************
 
-#include <ADB_Board.h>
 #include <stdbool.h>
 
 #include <ti/drivers/Power.h>
@@ -63,6 +62,12 @@
 #include <ti/devices/msp432p4xx/driverlib/uart.h>
 #include <ti/devices/msp432p4xx/driverlib/wdt_a.h>
 
+#include "ADB_Board.h"
+
+
+/*
+ *  =============================== DMA ===============================
+ */
 #include <ti/drivers/dma/UDMAMSP432.h>
 
 #if defined(__TI_COMPILER_VERSION__)
@@ -198,6 +203,32 @@ const PowerMSP432_ConfigV1 PowerMSP432_config = {
     .enablePerf = true,
     .enableParking = true
 };
+/*
+ *  =============================== Timer ===============================
+ */
+#include <ti/drivers/Timer.h>
+#include <ti/drivers/timer/TimerMSP432.h>
+
+TimerMSP432_Object timerMSP432Objects[Board_TIMERCOUNT];
+
+const TimerMSP432_HWAttrs timerMSP432HWAttrs[Board_TIMERCOUNT] = {
+    {
+        .timerBaseAddress = TIMER32_0_BASE,
+        .clockSource = TIMER_A_CLOCKSOURCE_SMCLK,
+        .intNum = INT_T32_INT1,
+        .intPriority = ~0
+    },
+};
+
+const Timer_Config Timer_config[Board_TIMERCOUNT] = {
+    {
+        .fxnTablePtr = &TimerMSP432_Timer32_fxnTable,
+        .object = &timerMSP432Objects[PQ9_TX_TIM],
+        .hwAttrs = &timerMSP432HWAttrs[PQ9_TX_TIM]
+    },
+};
+
+const uint_least8_t Timer_count = Board_TIMERCOUNT;
 
 /*
  *  =============================== UART ===============================

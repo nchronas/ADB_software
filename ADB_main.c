@@ -39,6 +39,8 @@
 /* Driver Header files */
 #include <ti/drivers/GPIO.h>
 #include <ti/drivers/UART.h>
+#include <ti/drivers/Watchdog.h>
+#include <ti/drivers/Timer.h>
 
 /* Example/Board Header files */
 #include "ADB_Board.h"
@@ -61,7 +63,7 @@ void *mainThread(void *arg0)
     /* Call driver init functions */
     GPIO_init();
     UART_init();
-    I2C_init();
+    Timer_init();
 
     /* Turn on user LED */
     GPIO_write(PQ9_EN, 1);
