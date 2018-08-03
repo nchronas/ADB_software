@@ -41,6 +41,7 @@
 #include <ti/drivers/UART.h>
 #include <ti/drivers/Watchdog.h>
 #include <ti/drivers/Timer.h>
+#include <ti/drivers/ADC.h>
 
 /* Example/Board Header files */
 #include "ADB_Board.h"
@@ -51,8 +52,15 @@
 #include "INA226.h"
 #include "TMP100.h"
 
+#include "parameters.h"
+#include "hal_subsystem.h"
+
+#include "osal.h"
+
 extern UART_Handle uart_dbg_bus;
 extern UART_Handle uart_pq9_bus;
+
+bool start_flag = false;
 
 /*
  *  ======== mainThread ========
@@ -64,18 +72,26 @@ void *mainThread(void *arg0)
     GPIO_init();
     UART_init();
     Timer_init();
+    ADC_init();
+    I2C_init();
+    Watchdog_init();
 
     /* Turn on user LED */
-    GPIO_write(PQ9_EN, 1);
     GPIO_write(PQ9_EN, 0);
 
 
     /*ECSS services start*/
     pkt_pool_INIT();
     device_init();
+    init_parameters();
+    OSAL_init();
+
+    start_flag = true;
 
     /* Loop forever echoing */
     while (1) {
+
+        set_parameter(SBSYS_reset_clr_int_wdg_param_id, NULL);
 
         update_device(ADB_MON_DEV_ID);
         usleep(1);
@@ -93,16 +109,110 @@ void *mainThread(void *arg0)
  *  This thread runs on a higher priority, since wdg pin
  *  has to be ready for master.
  */
-void *ecssThread(void *arg0)
+void *pqReceiveThread(void *arg0)
 {
 
-    sleep(1);
+    while(!start_flag) {
+        usleep(1000);
+    }
 
     /* Loop forever */
     while (1) {
          import_pkt();
+         usleep(1);
+    }
+
+    return (NULL);
+}
+
+void *pqTransmitThread(void *arg0)
+{
+
+    while(!start_flag) {
+        usleep(1000);
+    }
+
+    /* Loop forever */
+    while (1) {
          export_pkt();
-         usleep(1000);
+         usleep(1);
+    }
+
+    return (NULL);
+}
+
+extern uint8_t burn_sw_num;
+extern uint8_t burn_feedback;
+extern uint16_t burn_time;
+
+void *burnThread(void *arg0)
+{
+
+    while(!start_flag) {
+        usleep(1000);
+    }
+
+    /* Loop forever */
+    while (1) {
+
+      bool res = HAL_pend_burn_event();
+      if(res && burn_time > 0 && burn_time < 200 && burn_sw_num > 0 && burn_sw_num < 5) {
+
+        struct dep_device dev;
+
+        read_device_parameters(ADB_DEP_DEV_ID, &dev);
+
+        if(burn_sw_num == 1) {
+          dev.b1_enabled = true;
+          dev.b1_state = true;
+        } else if(burn_sw_num == 2) {
+          dev.b2_enabled = true;
+          dev.b2_state = true;
+        } else if(burn_sw_num == 3) {
+          dev.b2_enabled = true;
+          dev.b2_state = true;
+        } else if(burn_sw_num == 4) {
+          dev.b2_enabled = true;
+          dev.b2_state = true;
+        }
+
+        write_device_parameters(ADB_DEP_DEV_ID, &dev);
+
+        if(burn_feedback == true) {
+            for(uint16_t i = 0; i < burn_time*10; i++) {
+                read_device_parameters(ADB_DEP_DEV_ID, &dev);
+                if(burn_sw_num == 1 && dev.b1_status == false) {
+                  break;
+                } else if(burn_sw_num == 2 && dev.b2_status == false) {
+                  break;
+                } else if(burn_sw_num == 3 && dev.b3_status == false) {
+                  break;
+                } else if(burn_sw_num == 4 && dev.b4_status == false) {
+                  break;
+                }
+                usleep(100000);
+            }
+        } else {
+            sleep(burn_time);
+        }
+
+
+        read_device_parameters(ADB_DEP_DEV_ID, &dev);
+
+        if(dev.b1_enabled && dev.b1_state) {
+          dev.b1_state = false;
+        } else if(dev.b2_enabled && dev.b2_state) {
+          dev.b2_state = false;
+        } else if(dev.b3_enabled && dev.b3_state) {
+          dev.b3_state = false;
+        } else if(dev.b4_enabled && dev.b4_state) {
+          dev.b4_state = false;
+        }
+
+        write_device_parameters(ADB_DEP_DEV_ID, &dev);
+      }
+      usleep(1000);
+
     }
 
     return (NULL);
