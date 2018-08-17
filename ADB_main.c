@@ -88,6 +88,11 @@ void *mainThread(void *arg0)
 
     start_flag = true;
 
+
+    uint16_t size;
+    uint8_t buf[4];
+    uint32_t sen_loop = 100000;
+
     /* Loop forever echoing */
     while (1) {
 
@@ -99,7 +104,8 @@ void *mainThread(void *arg0)
         update_device(ADB_TEMP_DEV_ID);
         usleep(1);
 
-        usleep(100);
+        get_parameter(SBSYS_sensor_loop_param_id, &sen_loop, buf, &size);
+        usleep(sen_loop);
 
     }
 }

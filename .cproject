@@ -30,12 +30,13 @@
 							<builder buildPath="${BuildDirectory}" id="com.ti.ccstudio.buildDefinitions.MSP432_GNU_7.0.exe.builderDebug.1407107406" keepEnvironmentInBuildfile="false" name="GNU Make" parallelBuildOn="true" parallelizationNumber="optimal" superClass="com.ti.ccstudio.buildDefinitions.MSP432_GNU_7.0.exe.builderDebug"/>
 							<tool id="com.ti.ccstudio.buildDefinitions.MSP432_GNU_7.0.exe.compilerDebug.691399186" name="GNU Compiler" superClass="com.ti.ccstudio.buildDefinitions.MSP432_GNU_7.0.exe.compilerDebug">
 								<option id="com.ti.ccstudio.buildDefinitions.MSP432_GNU_7.0.compilerID.INCLUDE_PATH.955754259" name="Include paths (-I)" superClass="com.ti.ccstudio.buildDefinitions.MSP432_GNU_7.0.compilerID.INCLUDE_PATH" valueType="includePath">
-									<listOptionValue builtIn="false" value="/Users/nchronas/Documents/repos/delfiPQ/workspace7/ecss_services/delfiPQ/ADB"/>
-									<listOptionValue builtIn="false" value="/Users/nchronas/Documents/repos/delfiPQ/workspace7/ecss_services/delfiPQ/ADB/HAL"/>
-									<listOptionValue builtIn="false" value="/Users/nchronas/Documents/repos/delfiPQ/workspace7/ecss_services/delfiPQ/OSAL"/>
-									<listOptionValue builtIn="false" value="/Users/nchronas/Documents/repos/delfiPQ/workspace7/ecss_services/delfiPQ"/>
-									<listOptionValue builtIn="false" value="/Users/nchronas/Documents/repos/delfiPQ/workspace7/ecss_services/core"/>
-									<listOptionValue builtIn="false" value="/Users/nchronas/Documents/repos/delfiPQ/workspace7/ecss_services/services"/>
+									<listOptionValue builtIn="false" value="/Users/nchronas/Documents/repos/delfiPQ/workspace7/PQ9_bus_software/delfiPQ/HAL"/>
+									<listOptionValue builtIn="false" value="/Users/nchronas/Documents/repos/delfiPQ/workspace7/PQ9_bus_software/delfiPQ/ADB"/>
+									<listOptionValue builtIn="false" value="/Users/nchronas/Documents/repos/delfiPQ/workspace7/PQ9_bus_software/delfiPQ/ADB/HAL"/>
+									<listOptionValue builtIn="false" value="/Users/nchronas/Documents/repos/delfiPQ/workspace7/PQ9_bus_software/delfiPQ/OSAL"/>
+									<listOptionValue builtIn="false" value="/Users/nchronas/Documents/repos/delfiPQ/workspace7/PQ9_bus_software/delfiPQ"/>
+									<listOptionValue builtIn="false" value="/Users/nchronas/Documents/repos/delfiPQ/workspace7/PQ9_bus_software/core"/>
+									<listOptionValue builtIn="false" value="/Users/nchronas/Documents/repos/delfiPQ/workspace7/PQ9_bus_software/services"/>
 									<listOptionValue builtIn="false" value="/Users/nchronas/Documents/repos/delfiPQ/workspace7/INA226"/>
 									<listOptionValue builtIn="false" value="/Users/nchronas/Documents/repos/delfiPQ/workspace7/TMP100"/>
 									<listOptionValue builtIn="false" value="${INHERITED_INCLUDE_PATH}"/>
