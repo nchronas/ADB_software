@@ -60,6 +60,9 @@
 extern UART_Handle uart_dbg_bus;
 extern UART_Handle uart_pq9_bus;
 
+extern uint16_t pq_rx_addr_cnt;
+extern uint16_t pq_rx_byte_cnt;
+
 bool start_flag = false;
 
 /*
@@ -75,6 +78,13 @@ void *mainThread(void *arg0)
     ADC_init();
     I2C_init();
     Watchdog_init();
+
+    uint32_t wdg_time = OSAL_sys_GetTick();
+    uint32_t now_time;
+
+    GPIO_write(EXT_WDG, 1);
+    usleep(19600);
+    GPIO_write(EXT_WDG, 0);
 
     /* Turn on user LED */
     GPIO_write(PQ9_EN, 0);
@@ -95,6 +105,14 @@ void *mainThread(void *arg0)
 
     /* Loop forever echoing */
     while (1) {
+
+        now_time = OSAL_sys_GetTick();
+        if(now_time - wdg_time > 2100) {
+          GPIO_write(EXT_WDG, 1);
+          usleep(19600);
+          GPIO_write(EXT_WDG, 0);
+          wdg_time = now_time;
+        }
 
         set_parameter(SBSYS_reset_clr_int_wdg_param_id, NULL);
 
