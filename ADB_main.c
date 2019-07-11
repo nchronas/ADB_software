@@ -142,7 +142,7 @@ void *pqReceiveThread(void *arg0)
 
     /* Loop forever */
     while (1) {
-         import_pkt();
+         PQ9_beta();
          usleep(1);
     }
 
@@ -158,8 +158,8 @@ void *pqTransmitThread(void *arg0)
 
     /* Loop forever */
     while (1) {
-         export_pkt();
-         usleep(1);
+        //export_pkt();
+        sleep(100);
     }
 
     return (NULL);
